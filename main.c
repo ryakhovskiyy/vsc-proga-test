@@ -4,8 +4,10 @@
 int main(void)
 {
     FILE *fin, *fout;
-    int* a, b, c;
-    int i, j, q=1;
+    int* a;
+    int* b;
+    int* c;
+    int i, j, n, q=1;
 
     fin = fopen("input.txt", "r");
     fout = fopen("output.txt", "w");
