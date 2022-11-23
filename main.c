@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void f(int *a, int *b, int *c, int n);
+
 int main(void)
 {
     FILE *fin, *fout;
