@@ -20,7 +20,7 @@ int main(void)
     {
         a = (int*) malloc(n*sizeof(int));
         b = (int*) malloc(n*sizeof(int)); 
-        c = (int*) malloc((2*n+1)*sizeof(int)); 
+        c = (int*) malloc((2*n)*sizeof(int)); 
         for (i=0; i<n; i++) 
         {
             q=fscanf(fin, "%d", &a[i]);
@@ -68,9 +68,11 @@ void f(int *a, int *b, int *c, int n)
         k=0;
         for (i=n-1; i>=0; i--)  //увеличиваем на 1 массив d
         {
-            d[i]=(d[i]+e[i]+r)%10;
-            r=(d[i]+e[i]+r)/10;
-        }
+            d[i]=(d[i]+e[i]+r);
+            r=d[i]/10;
+            d[i]%=10;
+        } 
+
         r=0;
         for (i=n-1; i>=0; i--) // умножаем b на d и получаем c
         {
@@ -81,6 +83,7 @@ void f(int *a, int *b, int *c, int n)
                 c[j+i]%=10;
                 c[i+j+1]+=r;
             }
+            printf ("%d %d %d\n", c[i], a[i], b[i]); 
         }
         
         
@@ -93,6 +96,7 @@ void f(int *a, int *b, int *c, int n)
         }
     }
     r=0;
+
     for (i=n-1; i>=0; i--) //откатываемся на шаг назад, когда еще все было норм и записываем это в а
     {
         a[i]=(d[i]-e[i]+10-r)%10;
