@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
-void f(int *a, int *b, int *c, int n);
+void f (int *a, int *b, int *c, int n);
 
 int main(void)
 {
@@ -9,16 +10,17 @@ int main(void)
     int* a;
     int* b;
     int* c;
-    int i, j, n, q=1;
+    int i, n, q=1;
 
-    fin = fopen("input.txt", "r");
-    fout = fopen("output.txt", "w");
-
+    
+    fin=fopen("input.txt", "r");
+    fout=fopen("output.txt", "w");
+    
     if ((fscanf(fin, "%d", &n) != EOF)&&(n>0))
     {
         a = (int*) malloc(n*sizeof(int));
         b = (int*) malloc(n*sizeof(int)); 
-        c = (int*) malloc((n+1)*sizeof(int)); 
+        c = (int*) malloc((2*n+1)*sizeof(int)); 
         for (i=0; i<n; i++) 
         {
             q=fscanf(fin, "%d", &a[i]);
@@ -34,7 +36,7 @@ int main(void)
         if (q==1)
         {
             f(a, b, c, n);
-            for (i=0; i<n+1; i++) fprintf(fout, "%d ", c[i]);
+            for (i=0; i<n; i++) fprintf(fout, "%d ", a[i]);
         }
         else return -1;
         
@@ -51,35 +53,53 @@ int main(void)
 
 void f(int *a, int *b, int *c, int n)
 {
-    int i, r=0;
+    int i,j,k, r=0, flag=1;
+    int* d;
+    int* e;
+    d=(int*) malloc(n*sizeof(int));
+    e=(int*) malloc(n*sizeof(int));
     
-    for (i=0; i<n; i++)
+    for (i=0; i<n; i++) d[i]=0; //массив делителей (будет увеличиваться на 1 с помощью массива е)
+    for (i=0; i<n; i++) e[i]=0; //массив с единицей
+    e[n-1]=1;
+    
+    while (flag==1) //пока c не превысило d
     {
-        if (a[i]<b[i])
+        k=0;
+        for (i=n-1; i>=0; i--)  //увеличиваем на 1 массив d
         {
-            c[0]=1;
-            break;
+            d[i]=(d[i]+e[i]+r)%10;
+            r=(d[i]+e[i]+r)/10;
         }
-        if (a[i]>b[i])
+        r=0;
+        for (i=n-1; i>=0; i--) // умножаем b на d и получаем c
         {
-            c[0]=0;
-            break;
+            for (j=n-1; j>=0; j--)
+            {
+                c[j+i]+=(b[i]*d[j]);
+                r=(c[j+i])/10;
+                c[j+i]%=10;
+                c[i+j+1]+=r;
+            }
+        }
+        
+        
+        for (i=0; i<n; i++) //сравниваем a и c, чтобы c не было больше a
+        {
+            if (a[i]<c[n+i])
+            {
+                flag=0; //опускаем флаг, если это так
+            }
         }
     }
-
-    for (i=n-1; i>=0; i--)
+    r=0;
+    for (i=n-1; i>=0; i--) //откатываемся на шаг назад, когда еще все было норм и записываем это в а
     {
-        if (c[0]==0)
-        {
-            c[i+1]=(a[i]-b[i]+10-r)%10;
-            if (a[i]>=b[i]) r=0;
-            else r=1;
-        }
-        else
-        {
-            c[i+1]=(b[i]-a[i]+10-r)%10;
-            if (b[i]>=a[i]) r=0;
-            else r=1; 
-        }
+        a[i]=(d[i]-e[i]+10-r)%10;
+        if (a[i]>=e[i]) r=0;
+        else r=1;
     }
+    
+    free (d);
+    free (e);
 }
