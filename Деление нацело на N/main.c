@@ -65,27 +65,36 @@ void f(int *a, int *b, int *c, int n)
     
     while (flag==1) //пока c не превысило d
     {
-        k=0;
+        r=0;
         for (i=n-1; i>=0; i--)  //увеличиваем на 1 массив d
         {
-            d[i]=(d[i]+e[i]+r);
-            r=d[i]/10;
+            d[i]+=(e[i]+r);
+            if (d[i]>9) r=1;
+            else r=0;
             d[i]%=10;
         } 
 
-        r=0;
+        for (i=0; i<2*n; i++) c[i]=0;
+
         for (i=n-1; i>=0; i--) // умножаем b на d и получаем c
         {
+            r=0;
             for (j=n-1; j>=0; j--)
             {
-                c[j+i]+=(b[i]*d[j]);
-                r=(c[j+i])/10;
-                c[j+i]%=10;
-                c[i+j+1]+=r;
+                c[j+i+1]+=(b[j]*d[i]);
+                r=c[j+i+1]/10;
+                c[j+i+1]%=10;
+                c[i+j]+=r;
             }
-            printf ("%d %d %d\n", c[i], a[i], b[i]); 
+            
         }
         
+        for (k=0; k<2*n; k++) printf("%d", c[k]);
+            printf("\n");
+        for (k=0; k<n; k++) printf("%d", b[k]);
+            printf("\n");
+        for (k=0; k<n; k++) printf("%d", d[k]);
+            printf("\n");
         
         for (i=0; i<n; i++) //сравниваем a и c, чтобы c не было больше a
         {
@@ -93,14 +102,16 @@ void f(int *a, int *b, int *c, int n)
             {
                 flag=0; //опускаем флаг, если это так
             }
+            else if (a[i]>c[n+i]) break;
         }
+        printf("flag = %d\n\n", flag);
     }
-    r=0;
 
+    r=0;
     for (i=n-1; i>=0; i--) //откатываемся на шаг назад, когда еще все было норм и записываем это в а
     {
         a[i]=(d[i]-e[i]+10-r)%10;
-        if (a[i]>=e[i]) r=0;
+        if (d[i]>=e[i]) r=0;
         else r=1;
     }
     
